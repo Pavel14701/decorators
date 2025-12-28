@@ -1,7 +1,10 @@
+from typing import Any, Callable
+
 test_str = "Hi from"
 
-def apply_chain(func, chain):
-    def wrapper(*args, **kwargs):
+
+def apply_chain(func, chain) -> Callable[..., Any | str]:
+    def wrapper(*args, **kwargs) -> Any | str:
         result = func(*args, **kwargs)
         for level in chain:
             result = f"{result} [{level}]"
@@ -10,36 +13,36 @@ def apply_chain(func, chain):
 
 
 class A1Decorator:
-    def __init__(self, chain):
+    def __init__(self, chain) -> None:
         self.chain = chain + ["a1"]
 
-    def __call__(self, func):
+    def __call__(self, func) -> Callable[..., Any | str]:
         return apply_chain(func, self.chain)
 
 
 class ADecorator:
-    def __init__(self, chain):
+    def __init__(self, chain) -> None:
         self.chain = chain + ["a"]
         self.a1 = A1Decorator(self.chain)
 
-    def __call__(self, func):
+    def __call__(self, func) -> Callable[..., Any | str]:
         return apply_chain(func, self.chain)
 
 
 class FirstDecorator:
-    def __init__(self, chain):
+    def __init__(self, chain) -> None:
         self.chain = chain + ["first"]
         self.a = ADecorator(self.chain)
 
-    def __call__(self, func):
+    def __call__(self, func) -> Callable[..., Any | str]:
         return apply_chain(func, self.chain)
 
 
 class Decorator:
-    def __init__(self):
+    def __init__(self) -> None:
         self.first = FirstDecorator(["decorator"])
 
-    def __call__(self, func):
+    def __call__(self, func) -> Callable[..., Any | str]:
         return apply_chain(func, ["decorator"])
 
 
